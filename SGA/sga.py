@@ -81,9 +81,18 @@ def mutation(config, population, current_itr):
 def fitness(population):
     return f(population)
 
-def selection(config, population, fitness_vals):
+def selection(config, population):
     '''
     选择
     输入：
-        
+        size        : 种群规模
+        S           : parameter in elitism preservation
+        population  : 现有种群
     '''
+    size, S = config['size'], config['S']
+    fitness_vals = fitness(population)
+
+    sort_idx = np.argsort(fitness_vals)
+    selected = copy.deepcopy(population[sort_idx[:size-S], :])
+
+    return selected
