@@ -1,10 +1,11 @@
 import argparse
 import numpy as np
 from sga import generate_population, crossover, mutation, fitness, selection
-from test_func import f
+from test_func import f1
 import copy
 import matplotlib.pyplot as plt
-import sys
+import os
+os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
 def get_args():
     '''
@@ -36,7 +37,7 @@ if __name__ == '__main__':
     population = generate_population(config)
     for itr in range(iteration):
         # 精英保存策略
-        fitness_vals = fitness(population)
+        fitness_vals = fitness(population, f1)
         sort_idx = np.argsort(fitness_vals)
         elitism = copy.deepcopy(population[sort_idx[:S], :])
 
@@ -53,7 +54,8 @@ if __name__ == '__main__':
         population = np.concatenate((copy.deepcopy(population), copy.deepcopy(m_children)), axis=0)
 
         # 选择
-        population = selection(config, population)
+        fitness_vals = fitness(population, f1)
+        population = selection(config, population, fitness_vals)
 
         # 将保存的精英加入新种群
         population = np.concatenate((copy.deepcopy(population), copy.deepcopy(elitism)), axis=0)

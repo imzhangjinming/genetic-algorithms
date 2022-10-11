@@ -3,7 +3,7 @@
 '''
 import numpy as np
 import copy
-from test_func import f
+from test_func import f1
 
 def generate_population(config):
     '''
@@ -78,19 +78,20 @@ def mutation(config, population, current_itr):
 
     return m_population
 
-def fitness(population):
+def fitness(population, f):
     return f(population)
 
-def selection(config, population):
+def selection(config, population, fitness_vals):
     '''
     选择
     输入：
         size        : 种群规模
         S           : parameter in elitism preservation
         population  : 现有种群
+        fitness_vals: 现有种群对应的适应度值
     '''
     size, S = config['size'], config['S']
-    fitness_vals = fitness(population)
+    # fitness_vals = fitness(population, f1)
 
     sort_idx = np.argsort(fitness_vals)
     selected = copy.deepcopy(population[sort_idx[:size-S], :])
