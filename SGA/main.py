@@ -4,6 +4,8 @@ from sga import generate_population, crossover, mutation, fitness, selection
 from test_func import f1
 import copy
 import matplotlib.pyplot as plt
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator
 import os
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
@@ -66,9 +68,21 @@ if __name__ == '__main__':
         best_fitness_vals.append(item[0])
         best_chromosome[idx, :] = item[1]
     
+    lb, ub = config['lb'], config['ub']
+    x = np.arange(lb, ub, 0.25)
+    y = np.arange(lb, ub, 0.25)
+    x, y = np.meshgrid(x, y)
+    f_values = f1(np.concatenate((x.reshape(-1, 1), y.reshape(-1, 1)), axis=1)).reshape(x.shape)
+
+    fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+    surf = ax.plot_surface(x, y, f_values, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+    ax.zaxis.set_major_formatter('{x:.02f}')
+    fig.colorbar(surf, shrink=0.5, aspect=5)
+    plt.show()
+
     plt.figure()
-    x = np.arange(iteration) + 1
-    plt.plot(x, best_fitness_vals)
+    itr = np.arange(iteration) + 1
+    plt.plot(itr, best_fitness_vals)
     plt.xlabel('iteration')
     plt.ylabel('fitness value')
     plt.show()
