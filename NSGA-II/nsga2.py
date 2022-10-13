@@ -68,7 +68,7 @@ def simulated_binary_crossover(config, population):
 
     return child_list
 
-def polynomial_mutation(config, population, current_itr):
+def polynomial_mutation(config, population, current_itr=0):
     '''
     多项式变异
     输入：
@@ -141,9 +141,9 @@ def fast_non_dominated_sort(config, population, objs):
         S_p = []
         n_p = 0
         for idx_q in range(population.shape[0]):
-            if(is_dominate(population[idx_p, :], population[idx_q, :], objs)):
+            if(is_dominate(population[idx_p, :][None, :], population[idx_q, :][None, :], objs)):
                 S_p.append(idx_q)
-            elif(is_dominate(population[idx_q, :], population[idx_p, :], objs)):
+            elif(is_dominate(population[idx_q, :][None, :], population[idx_p, :][None, :], objs)):
                 n_p += 1
         if(n_p == 0):
             rank[idx_p] = 1
@@ -164,7 +164,8 @@ def fast_non_dominated_sort(config, population, objs):
                     Q.append(idx_q)
         i += 1
         F_i = copy.deepcopy(Q)
-        F.append(F_i)
+        if len(F_i) != 0:
+            F.append(F_i)
 
     return F
 
@@ -198,13 +199,14 @@ def tournament_selection(config, population, F, objs):
         front_idx = i
         if(len(next_population_idx) + len(F_i) <= size):
             for idx in F_i:
-                next_population_idx.append[idx]
+                next_population_idx.append(idx)
         else:
             break
     
     if(len(next_population_idx) < size):
         crowd_distance = crowding_distance_assignment(config, F[front_idx], population, objs)
         sorted_idx = np.argsort(crowd_distance)
-        next_population_idx.append(F[front_idx][sorted_idx[:(size-len(next_population_idx))]])
+        for idx in range(size-len(next_population_idx)):
+            next_population_idx.append(F[front_idx][sorted_idx[idx].tolist()])
 
     return copy.deepcopy(population[next_population_idx, :])
